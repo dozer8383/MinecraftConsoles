@@ -67,55 +67,108 @@ bool PortalTile::isCubeShaped()
 	return false;
 }
 
-bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actuallySpawn)
-{
+// allow for larger portals like modern Minecraft
+bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actuallySpawn) {
 	int xd = 0;
 	int zd = 0;
-	if (level->getTile(x - 1, y, z) == Tile::obsidian_Id || level->getTile(x + 1, y, z) == Tile::obsidian_Id) xd = 1;
-	if (level->getTile(x, y, z - 1) == Tile::obsidian_Id || level->getTile(x, y, z + 1) == Tile::obsidian_Id) zd = 1;
-
-	if (xd == zd) return false;
-
-	if (level->getTile(x - xd, y, z - zd) == 0)
-	{
-		x -= xd;
-		z -= zd;
+	int fwidth = 0;
+	int fheight = 0;
+	for (int i = 22; i >= 1; i--) {
+		if (level->getTile(x-i, y, z) == Tile::obsidian_Id || level->getTile(x+i, y, z) == Tile::obsidian_Id) {
+			xd = 1;
+		}
+		if (level->getTile(x, y, z-1) == Tile::obsidian_Id || level->getTile(x, y, z+i) == Tile::obsidian_Id) {
+			zd = 1;
+		}
+		if (level->getTile(x, y+i, z) == Tile::obsidian_Id) {
+			fheight = i
+		}
 	}
-
-	for (int xx = -1; xx <= 2; xx++)
-	{
-		for (int yy = -1; yy <= 3; yy++)
-		{
-			bool edge = (xx == -1) || (xx == 2) || (yy == -1) || (yy == 3);
-			if ((xx == -1 || xx == 2) && (yy == -1 || yy == 3)) continue;
-
-			int t = level->getTile(x + xd * xx, y + yy, z + zd * xx);
-
-			if (edge)
-			{
+	if (xd == zd) return false;
+	if (!fheight) return false;
+	for (int i = 0; i <= 22; i++) {
+		if (level->getTile(x-xd, y, z-zd) == 0) {
+			x -= xd;
+			z -= zd;
+		}
+	}
+	for (int i = 22; i >= 1; i--) {
+		if (level->getTile(x+i, y, z) == Tile::obsidian_Id) {
+			fwidth = i;
+		}
+	}
+	if (!fwidth) return false;
+	for (int yy = -1; yy <= fheight; yy++) {
+		for (int xx = -1; xx <= fwidth; xx++) {
+			bool edge = (xx == -1) || (xx == fwidth) || (yy == -1) || (yy == fheight);
+			if ((xx == -1 || xx == fwidth) && (yy == -1 || yy == fheight)) continue; // do not check corners
+			int t = level->getTile(x+xx*xd, y+yy, z+xx*zd)
+			if (edge) {
 				if (t != Tile::obsidian_Id) return false;
-			}
-			else
-			{
+			} else {
 				if (t != 0 && t != Tile::fire_Id) return false;
 			}
 		}
 	}
-
-	if( !actuallySpawn )
-		return true;
-
-	for (int xx = 0; xx < 2; xx++)
-	{
-		for (int yy = 0; yy < 3; yy++)
-		{
-			level->setTileAndData(x + xd * xx, y + yy, z + zd * xx, Tile::portalTile_Id, 0, Tile::UPDATE_CLIENTS);
+	if (!actuallySpawn) return true;
+	for (int yy = 0; yy < fheight; yy++) {
+		for (int xx = 0; xx < fwidth; xx++) {
+			level->setTileAndData(x+xx*xd, y+yy, z+xx*zd, Tile::portalTile_Id, 0, Tile::UPDATE_CLIENTS);
 		}
 	}
-
 	return true;
-
 }
+
+// bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actuallySpawn)
+// {
+// 	int xd = 0; // is portal along x dimension
+// 	int zd = 0; // is portal along z dimension
+// 	// check dimension
+// 	if (level->getTile(x - 1, y, z) == Tile::obsidian_Id || level->getTile(x + 1, y, z) == Tile::obsidian_Id) xd = 1;
+// 	if (level->getTile(x, y, z - 1) == Tile::obsidian_Id || level->getTile(x, y, z + 1) == Tile::obsidian_Id) zd = 1;
+// 	// throw out if obsidian was found on both x and z dimensions
+// 	if (xd == zd) return false;
+// 	// if player lit the frame on the right inner space, switch the reference position to 
+// 	if (level->getTile(x - xd, y, z - zd) == 0)
+// 	{
+// 		x -= xd;
+// 		z -= zd;
+// 	}
+
+// 	for (int xx = -1; xx <= 2; xx++)
+// 	{
+// 		for (int yy = -1; yy <= 3; yy++)
+// 		{
+// 			bool edge = (xx == -1) || (xx == 2) || (yy == -1) || (yy == 3);
+// 			if ((xx == -1 || xx == 2) && (yy == -1 || yy == 3)) continue;
+
+// 			int t = level->getTile(x + xd * xx, y + yy, z + zd * xx);
+
+// 			if (edge)
+// 			{
+// 				if (t != Tile::obsidian_Id) return false;
+// 			}
+// 			else
+// 			{
+// 				if (t != 0 && t != Tile::fire_Id) return false;
+// 			}
+// 		}
+// 	}
+
+// 	if( !actuallySpawn )
+// 		return true;
+
+// 	for (int xx = 0; xx < 2; xx++)
+// 	{
+// 		for (int yy = 0; yy < 3; yy++)
+// 		{
+// 			level->setTileAndData(x + xd * xx, y + yy, z + zd * xx, Tile::portalTile_Id, 0, Tile::UPDATE_CLIENTS);
+// 		}
+// 	}
+
+// 	return true;
+
+// }
 
 void PortalTile::neighborChanged(Level *level, int x, int y, int z, int type)
 {
