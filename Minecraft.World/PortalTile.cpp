@@ -81,7 +81,7 @@ bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actually
 			zd = 1;
 		}
 		if (level->getTile(x, y+i, z) == Tile::obsidian_Id) {
-			fheight = i
+			fheight = i;
 		}
 	}
 	if (xd == zd) return false;
@@ -102,7 +102,7 @@ bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actually
 		for (int xx = -1; xx <= fwidth; xx++) {
 			bool edge = (xx == -1) || (xx == fwidth) || (yy == -1) || (yy == fheight);
 			if ((xx == -1 || xx == fwidth) && (yy == -1 || yy == fheight)) continue; // do not check corners
-			int t = level->getTile(x+xx*xd, y+yy, z+xx*zd)
+			int t = level->getTile(x+xx*xd, y+yy, z+xx*zd);
 			if (edge) {
 				if (t != Tile::obsidian_Id) return false;
 			} else {
