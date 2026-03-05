@@ -172,51 +172,51 @@ bool PortalTile::trySpawnPortal(Level *level, int x, int y, int z, bool actually
 
 void PortalTile::neighborChanged(Level *level, int x, int y, int z, int type)
 {
-	int xd = 0;
-	int zd = 1;
-	if (level->getTile(x - 1, y, z) == id || level->getTile(x + 1, y, z) == id)
-	{
-		xd = 1;
-		zd = 0;
-	}
+	// int xd = 0;
+	// int zd = 1;
+	// if (level->getTile(x - 1, y, z) == id || level->getTile(x + 1, y, z) == id)
+	// {
+	// 	xd = 1;
+	// 	zd = 0;
+	// }
 
-	int yBottom = y;
-	while (level->getTile(x, yBottom - 1, z) == id)
-		yBottom--;
+	// int yBottom = y;
+	// while (level->getTile(x, yBottom - 1, z) == id)
+	// 	yBottom--;
 
-	if (level->getTile(x, yBottom - 1, z) != Tile::obsidian_Id)
-	{
-		level->removeTile(x, y, z);
-		return;
-	}
+	// if (level->getTile(x, yBottom - 1, z) != Tile::obsidian_Id)
+	// {
+	// 	level->removeTile(x, y, z);
+	// 	return;
+	// }
 
-	int height = 1;
-	while (height < 4 && level->getTile(x, yBottom + height, z) == id)
-		height++;
+	// int height = 1;
+	// while (height < 4 && level->getTile(x, yBottom + height, z) == id)
+	// 	height++;
 
-	if (height != 3 || level->getTile(x, yBottom + height, z) != Tile::obsidian_Id)
-	{
-		level->removeTile(x, y, z);
-		return;
-	}
+	// if (height != 3 || level->getTile(x, yBottom + height, z) != Tile::obsidian_Id)
+	// {
+	// 	level->removeTile(x, y, z);
+	// 	return;
+	// }
 
-	bool we = level->getTile(x - 1, y, z) == id || level->getTile(x + 1, y, z) == id;
-	bool ns = level->getTile(x, y, z - 1) == id || level->getTile(x, y, z + 1) == id;
-	if (we && ns)
-	{
-		level->removeTile(x, y, z);
-		return;
-	}
+	// bool we = level->getTile(x - 1, y, z) == id || level->getTile(x + 1, y, z) == id;
+	// bool ns = level->getTile(x, y, z - 1) == id || level->getTile(x, y, z + 1) == id;
+	// if (we && ns)
+	// {
+	// 	level->removeTile(x, y, z);
+	// 	return;
+	// }
 
-	if (!(//
-		(level->getTile(x + xd, y, z + zd) == Tile::obsidian_Id && level->getTile(x - xd, y, z - zd) == id) || //
-		(level->getTile(x - xd, y, z - zd) == Tile::obsidian_Id && level->getTile(x + xd, y, z + zd) == id)//
-		))
-	{
-		level->removeTile(x, y, z);
-		return;
-	}
-
+	// if (!(//
+	// 	(level->getTile(x + xd, y, z + zd) == Tile::obsidian_Id && level->getTile(x - xd, y, z - zd) == id) || //
+	// 	(level->getTile(x - xd, y, z - zd) == Tile::obsidian_Id && level->getTile(x + xd, y, z + zd) == id)//
+	// 	))
+	// {
+	// 	level->removeTile(x, y, z);
+	// 	return;
+	// }
+	return;
 }
 
 bool PortalTile::shouldRenderFace(LevelSource *level, int x, int y, int z, int face)
